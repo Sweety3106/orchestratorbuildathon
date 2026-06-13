@@ -301,9 +301,12 @@ export default function Dashboard() {
 
   // Fast pre-fill options
   const PREFILLS = [
-    { title: "AI Career Counselor", desc: "Indian students career pathway guidance matching skills and parent updates", prompt: "I want to launch an AI-powered career guidance platform for Indian students." },
-    { title: "Green Energy Newsletter", desc: "Curated newsletter covering sustainable investments and policy in India", prompt: "I want to launch a newsletter about green-energy startups in India." },
-    { title: "SaaS CRM for Micro-Breweries", desc: "Niche tracking customer acquisition and inventory for local craft breweries", prompt: "I want to build a SaaS CRM and inventory tool specifically for micro-breweries in Bengaluru." }
+    { emoji: '💄', title: 'Beauty Marketplace', desc: 'Indie makeup & skincare brands connecting with beauty enthusiasts aged 18-35', prompt: 'I want to launch a beauty marketplace connecting indie makeup and skincare brands with customers aged 18-35.' },
+    { emoji: '💰', title: 'Fintech Neobank', desc: 'AI-powered digital wallet and investment app for college students in India', prompt: 'I want to build a fintech neobank and AI investment app for college students in India.' },
+    { emoji: '💪', title: 'Fitness Coach App', desc: 'Personalized AI workout and nutrition plans for busy professionals at home', prompt: 'I want to launch an AI fitness coaching app with personalized home workout and nutrition plans for busy professionals.' },
+    { emoji: '📚', title: 'EdTech Career Guide', desc: 'AI career counselor helping Indian students map skills to high-income jobs', prompt: 'I want to launch an AI-powered career guidance platform for Indian students.' },
+    { emoji: '🍕', title: 'Food Delivery SaaS', desc: 'Cloud kitchen management and delivery optimization platform for restaurants', prompt: 'I want to build a SaaS platform for cloud kitchen management and food delivery optimization for restaurants.' },
+    { emoji: '🌱', title: 'Green Energy Media', desc: 'Curated newsletter and investor directory for Indian clean-energy startups', prompt: 'I want to launch a newsletter and investor directory about green-energy startups in India.' },
   ];
 
   const handleCopyCode = () => {
@@ -490,20 +493,22 @@ export default function Dashboard() {
             {/* Quick Templates */}
             <div className="space-y-4 max-w-3xl mx-auto">
               <h4 className="text-xs font-mono uppercase tracking-widest text-gray-500">Or pick a template to test</h4>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-left">
                 {PREFILLS.map((p, i) => (
                   <div 
                     key={i}
                     onClick={() => handleOrchestrate(p.prompt)}
-                    className="glass-panel glow-card p-5 rounded-xl border border-white/5 cursor-pointer hover:border-violet-500/25 hover:bg-neutral-900/60 transition duration-300 flex flex-col justify-between group"
+                    className="glass-panel glow-card p-4 rounded-xl border border-white/5 cursor-pointer hover:border-violet-500/30 hover:bg-violet-500/5 transition duration-200 flex flex-col justify-between group active:scale-95"
                   >
                     <div>
-                      <h5 className="font-bold text-white mb-2 text-sm group-hover:text-violet-400 transition">{p.title}</h5>
-                      <p className="text-xs text-gray-400 leading-relaxed font-light">{p.desc}</p>
+                      <div className="text-2xl mb-2">{p.emoji}</div>
+                      <h5 className="font-bold text-white mb-1.5 text-sm group-hover:text-violet-400 transition">{p.title}</h5>
+                      <p className="text-[11px] text-gray-400 leading-relaxed font-light line-clamp-2">{p.desc}</p>
                     </div>
-                    <div className="mt-4 flex justify-end">
-                      <span className="text-[10px] text-violet-400 font-mono tracking-wider flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
-                        Run Demo <ArrowRight className="w-3 h-3" />
+                    <div className="mt-3 flex items-center justify-between">
+                      <span className="text-[9px] font-mono text-gray-600 uppercase tracking-widest">1-click demo</span>
+                      <span className="text-[10px] text-violet-400 font-mono flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
+                        Launch <ArrowRight className="w-3 h-3" />
                       </span>
                     </div>
                   </div>
@@ -1102,13 +1107,30 @@ export default function Dashboard() {
                         Source Code View
                       </button>
                     </div>
-                    <button 
-                      onClick={handleCopyCode}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10 text-xs font-semibold text-gray-300 hover:text-white transition"
-                    >
-                      {copiedCode ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                      {copiedCode ? 'Copied!' : 'Copy Code'}
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button 
+                        onClick={handleCopyCode}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10 text-xs font-semibold text-gray-300 hover:text-white transition"
+                      >
+                        {copiedCode ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                        {copiedCode ? 'Copied!' : 'Copy Code'}
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (!result) return;
+                          const blob = new Blob([result.development.landingPageHtml], { type: 'text/html' });
+                          const url = URL.createObjectURL(blob);
+                          const a = document.createElement('a');
+                          a.href = url;
+                          a.download = `${result.intent?.name?.replace(/\s+/g, '-').toLowerCase() || 'startup'}-landing-page.html`;
+                          a.click();
+                          URL.revokeObjectURL(url);
+                        }}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-emerald-500/30 hover:border-emerald-500/50 bg-emerald-500/10 hover:bg-emerald-500/15 text-xs font-semibold text-emerald-400 hover:text-emerald-300 transition"
+                      >
+                        ⬇ Download .html
+                      </button>
+                    </div>
                   </div>
 
                   {/* Rendering */}
