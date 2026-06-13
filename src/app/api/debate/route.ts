@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { ApiKeys } from '@/lib/agents/orchestrator';
+import { ApiKeys, cleanJson } from '@/lib/agents/orchestrator';
 
 export const dynamic = 'force-dynamic';
 
@@ -133,7 +133,7 @@ Pricing: ${business.financials.pricingPoint}
 MRR Estimate: ${business.financials.estimatedMRR}`;
 
       const res = await callLLM(promptText, keys, systemPrompt);
-      const cleaned = res.replace(/```json/g, '').replace(/```/g, '').trim();
+      const cleaned = cleanJson(res);
       debateData = JSON.parse(cleaned);
     } catch (error) {
       // High-Fidelity Simulation Fallback

@@ -575,7 +575,7 @@ export default function Dashboard() {
               </div>
 
               {/* Logs terminal body */}
-              <div className="flex-1 bg-[#010103] p-6 font-mono text-xs leading-relaxed overflow-y-auto space-y-3">
+              <div className="flex-1 bg-[#010103] p-6 font-mono text-xs leading-relaxed overflow-y-auto space-y-3 terminal-container">
                 {logs.length === 0 ? (
                   <div className="flex items-center gap-2 text-gray-500">
                     <Loader2 className="w-4 h-4 animate-spin text-violet-500" />
@@ -1135,7 +1135,7 @@ export default function Dashboard() {
                       <div className="bg-black/60 px-4 py-2 border-b border-white/5 text-xs text-gray-500 font-mono">
                         development_landing_page.html
                       </div>
-                      <pre className="bg-[#010103] p-6 text-[10px] font-mono text-gray-400 leading-relaxed overflow-auto h-[600px] whitespace-pre">
+                      <pre className="bg-[#010103] p-6 text-[10px] font-mono text-gray-400 leading-relaxed overflow-auto h-[600px] whitespace-pre terminal-container">
                         {result.development.landingPageHtml}
                       </pre>
                     </div>

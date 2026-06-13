@@ -300,3 +300,20 @@ body {
   border-color: rgba(124, 58, 237, 0.25) !important;
 }
 
+/* Keep terminal & code view colors dark and highly readable in light mode */
+.light-mode .terminal-container,
+.light-mode .terminal-container * {
+  color: revert;
+}
+.light-mode .terminal-container .text-gray-300 { color: #d1d5db !important; }
+.light-mode .terminal-container .text-gray-400 { color: #9ca3af !important; }
+.light-mode .terminal-container .text-gray-500 { color: #6b7280 !important; }
+.light-mode .terminal-container .text-gray-600 { color: #4b5563 !important; }
+.light-mode .terminal-container .text-amber-200 { color: #fde68a !important; }
+.light-mode .terminal-container .text-red-300 { color: #fca5a5 !important; }
+.light-mode .terminal-container .text-emerald-400 { color: #34d399 !important; }
+.light-mode .terminal-container .text-violet-400 { color: #a78bfa !important; }
+.light-mode .terminal-container .text-white { color: #ffffff !important; }
+.light-mode .terminal-container .font-bold { color: #f3f4f6 !important; }
+
+

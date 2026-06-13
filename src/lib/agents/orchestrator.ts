@@ -188,12 +188,13 @@ function escapeNestedJsonQuotes(str: string): string {
   return result;
 }
 
-function cleanJson(text: string): string {
+export function cleanJson(text: string): string {
   let cleaned = text.trim();
   
   // Strip JS comments first (both single-line and multi-line block comments)
-  cleaned = cleaned.replace(/\/\/[^\n]*\n/g, '\n');
-  cleaned = cleaned.replace(/\/\/[^\n]*$/g, '');
+  // Use negative lookbehinds to prevent stripping http:// or https:// or // relative URL prefixes
+  cleaned = cleaned.replace(/(?<!["':])\/\/[^\n]*\n/g, '\n');
+  cleaned = cleaned.replace(/(?<!["':])\/\/[^\n]*$/g, '');
   cleaned = cleaned.replace(/\/\*[\s\S]*?\*\//g, '');
   cleaned = cleaned.trim();
 
@@ -354,9 +355,17 @@ async function callLLM(prompt: string, keys: ApiKeys, systemPrompt?: string): Pr
 function generateSimulatedData(userPrompt: string): StartupAnalysis {
   const promptLower = userPrompt.toLowerCase();
   
-  // Detect startup concept
-  const isEducation = promptLower.includes('student') || promptLower.includes('career') || promptLower.includes('educat') || promptLower.includes('college') || promptLower.includes('counsel');
-  const isGreen = promptLower.includes('green') || promptLower.includes('energy') || promptLower.includes('solar') || promptLower.includes('clean') || promptLower.includes('environ');
+  // Detect startup concept — comprehensive industry detection
+  const isEducation = promptLower.includes('student') || promptLower.includes('career') || promptLower.includes('educat') || promptLower.includes('college') || promptLower.includes('counsel') || promptLower.includes('tutor') || promptLower.includes('learn') || promptLower.includes('school') || promptLower.includes('mentor');
+  const isGreen = promptLower.includes('green') || promptLower.includes('energy') || promptLower.includes('solar') || promptLower.includes('clean') || promptLower.includes('environ') || promptLower.includes('sustain') || promptLower.includes('eco') || promptLower.includes('climate') || promptLower.includes('wind') || promptLower.includes('renew');
+  const isBeauty = promptLower.includes('beauty') || promptLower.includes('makeup') || promptLower.includes('cosmetic') || promptLower.includes('skincare') || promptLower.includes('salon') || promptLower.includes('spa') || promptLower.includes('skin care') || promptLower.includes('hair') || promptLower.includes('grooming') || promptLower.includes('nail') || promptLower.includes('lipstick') || promptLower.includes('fragrance') || promptLower.includes('perfume') || promptLower.includes('glow') || promptLower.includes('serum');
+  const isHealth = !isBeauty && (promptLower.includes('health') || promptLower.includes('medic') || promptLower.includes('wellness') || promptLower.includes('clinic') || promptLower.includes('hospital') || promptLower.includes('doctor') || promptLower.includes('patient') || promptLower.includes('pharma') || promptLower.includes('therapy') || promptLower.includes('mental') || promptLower.includes('telemedicine') || promptLower.includes('biotech') || promptLower.includes('dental') || promptLower.includes('nursing'));
+  const isFinance = promptLower.includes('finance') || promptLower.includes('fintech') || promptLower.includes('invest') || promptLower.includes('trading') || promptLower.includes('crypto') || promptLower.includes('banking') || promptLower.includes('insurance') || promptLower.includes('loan') || promptLower.includes('wealth') || promptLower.includes('stock') || promptLower.includes('payment') || promptLower.includes('wallet') || promptLower.includes('neobank') || promptLower.includes('defi');
+  const isFood = promptLower.includes('food') || promptLower.includes('restaurant') || promptLower.includes('beverage') || promptLower.includes('drink') || promptLower.includes('cafe') || promptLower.includes('coffee') || promptLower.includes('kitchen') || promptLower.includes('recipe') || promptLower.includes('meal') || promptLower.includes('catering') || promptLower.includes('food delivery') || promptLower.includes('brew') || promptLower.includes('bakery') || promptLower.includes('cuisine');
+  const isRealEstate = promptLower.includes('real estate') || promptLower.includes('property') || promptLower.includes('housing') || (promptLower.includes('home') && !isBeauty) || promptLower.includes('apartment') || promptLower.includes('construction') || promptLower.includes('interior design') || promptLower.includes('architect') || promptLower.includes('rent') || promptLower.includes('mortgage') || promptLower.includes('proptech');
+  const isFitness = !isHealth && (promptLower.includes('fitness') || promptLower.includes('gym') || promptLower.includes('workout') || promptLower.includes('yoga') || promptLower.includes('sport') || promptLower.includes('athlet') || promptLower.includes('running') || promptLower.includes('cycling') || promptLower.includes('training') || promptLower.includes('nutrition') || promptLower.includes('bodybuilding') || promptLower.includes('crossfit'));
+  const isTravel = promptLower.includes('travel') || promptLower.includes('tourism') || promptLower.includes('hotel') || promptLower.includes('booking') || promptLower.includes('trip') || promptLower.includes('vacation') || promptLower.includes('airline') || promptLower.includes('hospitality') || promptLower.includes('tour operator') || promptLower.includes('destination') || promptLower.includes('airbnb');
+  const isFashion = !isBeauty && (promptLower.includes('fashion') || promptLower.includes('apparel') || promptLower.includes('clothing') || promptLower.includes('wear') || promptLower.includes('dress') || promptLower.includes('style') || promptLower.includes('boutique') || promptLower.includes('jewel') || promptLower.includes('accessori') || promptLower.includes('textile') || promptLower.includes('garment'));
   
   let name = "FounderOS Launchpad";
   let industry = "General SaaS";
@@ -600,7 +609,13 @@ function generateSimulatedData(userPrompt: string): StartupAnalysis {
   };
 
   const uiux = {
-    colors: isEducation ? {
+    colors: isBeauty ? {
+      primary: "#e879a0",
+      secondary: "#f9a8d4",
+      background: "#0f0008",
+      text: "#fdf2f8",
+      accent: "#c026d3"
+    } : isEducation ? {
       primary: "#6366f1",
       secondary: "#f43f5e",
       background: "#030303",
@@ -612,6 +627,48 @@ function generateSimulatedData(userPrompt: string): StartupAnalysis {
       background: "#030303",
       text: "#f3f4f6",
       accent: "#84cc16"
+    } : isHealth ? {
+      primary: "#0ea5e9",
+      secondary: "#06b6d4",
+      background: "#00070f",
+      text: "#f0f9ff",
+      accent: "#38bdf8"
+    } : isFinance ? {
+      primary: "#f59e0b",
+      secondary: "#d97706",
+      background: "#070501",
+      text: "#fefce8",
+      accent: "#fbbf24"
+    } : isFood ? {
+      primary: "#ef4444",
+      secondary: "#f97316",
+      background: "#0a0100",
+      text: "#fff7ed",
+      accent: "#fb923c"
+    } : isRealEstate ? {
+      primary: "#64748b",
+      secondary: "#475569",
+      background: "#020304",
+      text: "#f8fafc",
+      accent: "#94a3b8"
+    } : isFitness ? {
+      primary: "#f97316",
+      secondary: "#ef4444",
+      background: "#050100",
+      text: "#fff7ed",
+      accent: "#fb923c"
+    } : isTravel ? {
+      primary: "#06b6d4",
+      secondary: "#0891b2",
+      background: "#000a0f",
+      text: "#ecfeff",
+      accent: "#22d3ee"
+    } : isFashion ? {
+      primary: "#a855f7",
+      secondary: "#7c3aed",
+      background: "#05000a",
+      text: "#fdf4ff",
+      accent: "#c084fc"
     } : {
       primary: "#3b82f6",
       secondary: "#6366f1",
@@ -620,7 +677,7 @@ function generateSimulatedData(userPrompt: string): StartupAnalysis {
       accent: "#8b5cf6"
     },
     typography: {
-      headings: "Outfit, sans-serif",
+      headings: isBeauty ? "Playfair Display, serif" : isFashion ? "Cormorant Garamond, serif" : isFood ? "Lora, serif" : isFitness ? "Bebas Neue, cursive" : isFinance ? "Merriweather, serif" : isTravel ? "Josefin Sans, sans-serif" : "Outfit, sans-serif",
       body: "Inter, sans-serif"
     },
     sections: [
@@ -680,6 +737,74 @@ function generateSimulatedData(userPrompt: string): StartupAnalysis {
   const secondaryColorHex = uiux.colors.secondary;
   const accentColorHex = uiux.colors.accent;
   
+  // Curated industry-specific Unsplash background images
+  const bgImageUrl = isBeauty
+    ? "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=1200&q=80"   // Makeup palette & cosmetics
+    : isEducation
+    ? "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=80"   // Students studying together
+    : isGreen
+    ? "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=1200&q=80"   // Wind turbines / clean energy
+    : isHealth
+    ? "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1200&q=80"   // Healthcare / medical
+    : isFinance
+    ? "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=1200&q=80"   // Financial charts / trading
+    : isFood
+    ? "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80"     // Restaurant / food
+    : isRealEstate
+    ? "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1200&q=80"   // Modern luxury home
+    : isFitness
+    ? "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80"   // Gym / fitness equipment
+    : isTravel
+    ? "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1200&q=80"   // Beautiful travel landscape
+    : isFashion
+    ? "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=1200&q=80"     // Fashion / clothing runway
+    : "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80"; // General tech / SaaS workspace
+
+  // Industry-specific Google Font pairings
+  const fontImportUrl = isBeauty
+    ? "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;700&display=swap"
+    : isFashion
+    ? "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@300;400;500;700&display=swap"
+    : isFood
+    ? "https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Inter:wght@300;400;500;700&display=swap"
+    : isFitness
+    ? "https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;700&display=swap"
+    : isFinance
+    ? "https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Inter:wght@300;400;500;700&display=swap"
+    : isTravel
+    ? "https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;700&family=Inter:wght@300;400;500;700&display=swap"
+    : "https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@300;400;500;700&display=swap";
+
+  const headingFontFamily = isBeauty ? "'Playfair Display', serif"
+    : isFashion ? "'Cormorant Garamond', serif"
+    : isFood ? "'Lora', serif"
+    : isFitness ? "'Bebas Neue', cursive"
+    : isFinance ? "'Merriweather', serif"
+    : isTravel ? "'Josefin Sans', sans-serif"
+    : "'Outfit', sans-serif";
+
+  const heroDescription = isBeauty
+    ? "Discover your perfect beauty ritual. AI-powered skincare & makeup recommendations personalised just for you."
+    : isEducation
+    ? "Access premium career mentorship and map your skills to India's highest-income jobs."
+    : isGreen
+    ? "Get premium newsletters, policy trackers, and direct investor access for the green revolution."
+    : isHealth
+    ? "Your trusted partner for smarter, more accessible, personalised healthcare."
+    : isFinance
+    ? "Grow your wealth with AI-powered financial insights, smart investing, and real-time analytics."
+    : isFood
+    ? "Discover exceptional food experiences crafted and curated just for you."
+    : isRealEstate
+    ? "Find your dream home with intelligent property matching, market insights, and expert guidance."
+    : isFitness
+    ? "Train smarter, not harder. Hit your fitness goals with AI-powered coaching and nutrition plans."
+    : isTravel
+    ? "Explore the world's most beautiful destinations, personalised perfectly for your next adventure."
+    : isFashion
+    ? "Style that speaks your story. Discover fashion curated to match your unique aesthetic."
+    : "Launch your product, automate execution, and scale your business to the next level.";
+
   const landingPageHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -687,29 +812,33 @@ function generateSimulatedData(userPrompt: string): StartupAnalysis {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${name} - ${tagline}</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link href="${fontImportUrl}" rel="stylesheet">
   <style>
-    body { font-family: 'Inter', sans-serif; background-color: #030303; color: #f3f4f6; }
-    .font-outfit { font-family: 'Outfit', sans-serif; }
+    body { font-family: 'Inter', sans-serif; background-color: ${uiux.colors.background}; color: ${uiux.colors.text}; }
+    .font-heading { font-family: ${headingFontFamily}; }
     .neon-glow { box-shadow: 0 0 40px -5px ${primaryColorHex}40; }
   </style>
 </head>
-<body class="overflow-x-hidden min-h-screen bg-[#030303] text-gray-200">
+<body class="overflow-x-hidden min-h-screen text-gray-200">
   <header class="border-b border-white/5 bg-black/40 backdrop-blur-md sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-[${primaryColorHex}] to-[${secondaryColorHex}] flex items-center justify-center font-bold text-white font-outfit">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-[${primaryColorHex}] to-[${secondaryColorHex}] flex items-center justify-center font-bold text-white font-heading">
           ${name.substring(0,1)}
         </div>
-        <span class="font-outfit font-bold text-xl text-white tracking-tight">${name}</span>
+        <span class="font-heading font-bold text-xl text-white tracking-tight">${name}</span>
       </div>
       <div><a href="#signup" class="px-4 py-2 rounded-lg text-sm font-semibold bg-gradient-to-r from-[${primaryColorHex}] to-[${secondaryColorHex}] text-white hover:opacity-90 transition">Get Started</a></div>
     </div>
   </header>
-  <section class="relative py-24 px-6 max-w-7xl mx-auto flex flex-col items-center text-center">
-    <h1 class="font-outfit font-extrabold text-5xl md:text-7xl text-white max-w-4xl leading-tight mb-8">${tagline}</h1>
-    <p class="text-gray-400 text-lg md:text-xl max-w-2xl mb-10 leading-relaxed">${isEducation ? "Access premium career mentorship, map skills to high-income jobs." : isGreen ? "Get premium newsletters, policies, and investor access." : "Launch your product, automate execution, and scale your business easily."}</p>
-    <a href="#signup" class="px-8 py-4 rounded-xl font-bold bg-white text-black hover:bg-gray-100 transition shadow-lg text-center">Get Started</a>
+  <section class="relative py-28 px-6 max-w-7xl mx-auto flex flex-col items-center text-center overflow-hidden rounded-3xl my-8 border border-white/10 shadow-2xl">
+    <div class="absolute inset-0 z-0 bg-cover bg-center opacity-40 scale-105" style="background-image: url('${bgImageUrl}');"></div>
+    <div class="absolute inset-0 z-0 bg-gradient-to-b from-black/70 via-black/40 to-black/90"></div>
+    <div class="relative z-10 max-w-4xl mx-auto py-12">
+      <h1 class="font-heading font-extrabold text-5xl md:text-7xl text-white leading-tight mb-8 drop-shadow-lg">${tagline}</h1>
+      <p class="text-gray-200 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed drop-shadow-md">${heroDescription}</p>
+      <a href="#signup" class="px-8 py-4 rounded-xl font-bold bg-gradient-to-r from-[${primaryColorHex}] to-[${secondaryColorHex}] text-white hover:opacity-90 transition shadow-xl text-center inline-block text-lg">Get Started Free</a>
+    </div>
   </section>
 </body>
 </html>`;
@@ -1011,7 +1140,25 @@ Colors: ${JSON.stringify(baseData.uiux.colors)}.
 Sections: ${JSON.stringify(baseData.uiux.sections)}.
 Features: ${JSON.stringify(baseData.product.mvpFeatures)}.
 Pricing Point: ${baseData.business.financials.pricingPoint}.
-Write complete valid HTML code styled with Tailwind CSS CDN script, fully responsive, containing premium colors matching the palette, custom typography, grids, layout structure, working buttons, mock newsletter signup script, and cards. Include ALL code. Do not truncate. Return ONLY the HTML code. No markdown tags, no wrapper text.`;
+Write complete valid HTML code styled with Tailwind CSS CDN script, fully responsive, containing premium colors matching the palette, custom typography, grids, layout structure, working buttons, mock newsletter signup script, and cards. 
+
+Include a beautiful hero section with a cover background image. You MUST pick the SINGLE best matching URL from this curated list based on the startup industry:
+1. Beauty / Makeup / Cosmetics / Skincare / Salon / Spa: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=1200&q=80"
+2. EdTech / Education / Careers / Students / Tutoring: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=80"
+3. Green Tech / Clean Energy / Solar / Sustainability: "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=1200&q=80"
+4. Healthcare / Medical / Wellness / Telemedicine / Biotech: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1200&q=80"
+5. Finance / FinTech / Investing / Crypto / Wealth / Banking: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=1200&q=80"
+6. Food / Restaurant / Beverage / Cafe / Catering / Bakery: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80"
+7. Real Estate / Property / Housing / Construction / Architecture: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1200&q=80"
+8. Fitness / Gym / Yoga / Sports / Workout / Athletics: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80"
+9. Travel / Tourism / Hotel / Hospitality / Vacation: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1200&q=80"
+10. Fashion / Apparel / Clothing / Style / Boutique: "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=1200&q=80"
+11. General SaaS / Tech / Developer Tools / Software / AI: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80"
+
+If none of the above match, use: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80".
+Also load the matching premium Google Font for the heading: Beauty→Playfair Display, Fashion→Cormorant Garamond, Food→Lora, Fitness→Bebas Neue, Finance→Merriweather, Travel→Josefin Sans, otherwise use Outfit. Use the heading font for all h1/h2 elements.
+
+Do NOT use a placeholder or incomplete URL like "https://images.unsplash.com/photo-...". Apply a dark overlay (such as bg-black/60 or similar) over the background image inside the hero section to maintain high contrast and text readability. Include ALL HTML code. Do not truncate. Return ONLY the HTML code. No markdown tags, no wrapper text.`;
       const res = await callLLM(promptText, keys, system);
       // Clean result from markdown wrapper if any
       let cleanedHtml = res.trim();
