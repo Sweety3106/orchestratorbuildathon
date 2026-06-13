@@ -132,16 +132,33 @@ function escapeNestedJsonQuotes(str: string): string {
       
       for (let qIdx of quotesFound) {
         let nextNonSpace = "";
+        let nextNonSpaceIdx = -1;
         for (let l = qIdx + 1; l < str.length; l++) {
           if (!/\s/.test(str[l])) {
             nextNonSpace = str[l];
+            nextNonSpaceIdx = l;
             break;
           }
         }
         
-        if (nextNonSpace === ':' || nextNonSpace === ',' || nextNonSpace === '}' || nextNonSpace === ']') {
+        if (nextNonSpace === ':' || nextNonSpace === '}' || nextNonSpace === ']') {
           closingQuoteIdx = qIdx;
           break;
+        }
+
+        if (nextNonSpace === ',') {
+          // Verify if the next non-space after the comma starts a new value/key
+          let charAfterComma = "";
+          for (let m = nextNonSpaceIdx + 1; m < str.length; m++) {
+            if (!/\s/.test(str[m])) {
+              charAfterComma = str[m];
+              break;
+            }
+          }
+          if (charAfterComma === '"' || charAfterComma === '{' || charAfterComma === '[') {
+            closingQuoteIdx = qIdx;
+            break;
+          }
         }
       }
       

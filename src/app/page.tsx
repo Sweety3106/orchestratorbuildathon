@@ -854,7 +854,7 @@ export default function Dashboard() {
                               <td className="p-4 leading-relaxed">{c.strength}</td>
                               <td className="p-4 leading-relaxed text-amber-300/80">{c.weakness}</td>
                               <td className="p-4 text-right">
-                                <a href={c.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-violet-400 hover:text-violet-300 hover:underline">
+                                <a href={c.url ? (c.url.startsWith('http') || c.url.startsWith('//') ? c.url : 'https://' + c.url) : '#'} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-violet-400 hover:text-violet-300 hover:underline">
                                   Visit <ExternalLink className="w-3 h-3" />
                                 </a>
                               </td>
