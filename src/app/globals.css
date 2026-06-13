@@ -316,4 +316,64 @@ body {
 .light-mode .terminal-container .text-white { color: #ffffff !important; }
 .light-mode .terminal-container .font-bold { color: #f3f4f6 !important; }
 
+/* =====================================================
+   LIGHT MODE — CONTRAST FIXES FOR PROBLEM AREAS
+   ===================================================== */
+
+/* 1. Amber warning/conflict text (was near-invisible cream on white) */
+.light-mode .text-amber-200\/90 { color: #92400e !important; } /* amber-800 */
+.light-mode .text-amber-200 { color: #92400e !important; }
+.light-mode .text-amber-500 { color: #b45309 !important; }
+/* Conflicts card background — give it a warm tint so amber text reads clearly */
+.light-mode .bg-amber-500\/5 {
+  background-color: rgba(251, 191, 36, 0.12) !important;
+}
+.light-mode .border-amber-500\/10 {
+  border-color: rgba(245, 158, 11, 0.3) !important;
+}
+
+/* 2. GTM Timeline — channel tag badges (indigo-300 was invisible on white) */
+.light-mode .text-indigo-300 { color: #3730a3 !important; } /* indigo-800 */
+.light-mode .bg-indigo-500\/10 {
+  background-color: rgba(99, 102, 241, 0.1) !important;
+  border: 1px solid rgba(99, 102, 241, 0.25);
+}
+
+/* 3. GTM Timeline — week badge circle (violet-400 on violet-500/10 = too low contrast) */
+.light-mode .bg-violet-500\/10 {
+  background-color: rgba(124, 58, 237, 0.1) !important;
+  border: 1px solid rgba(124, 58, 237, 0.2);
+}
+/* violet-400 already has a global override to #6d28d9, that's fine */
+
+/* 4. Pitch deck slide cards — bg-neutral-900/60 stays dark in light mode */
+.light-mode .bg-neutral-900\/60 {
+  background-color: rgba(248, 250, 252, 0.95) !important; /* near-white slate */
+  box-shadow: 0 1px 6px rgba(15, 23, 42, 0.08);
+}
+/* Speaker notes box inside dark card */
+.light-mode .bg-black\/20 {
+  background-color: rgba(15, 23, 42, 0.05) !important;
+}
+/* Borders on pitch deck cards */
+.light-mode .border-white\/15 {
+  border-color: rgba(15, 23, 42, 0.12) !important;
+}
+/* Slide number text */
+.light-mode .border-white\/5 {
+  border-color: rgba(15, 23, 42, 0.08) !important;
+}
+/* SEO keyword tags */
+.light-mode .bg-white\/5 {
+  background-color: rgba(15, 23, 42, 0.04) !important;
+}
+
+/* 5. Red / error text in light mode */
+.light-mode .text-red-400 { color: #b91c1c !important; } /* red-700 */
+.light-mode .text-red-300 { color: #dc2626 !important; } /* red-600 */
+
+/* 6. Generic low-contrast fixes */
+.light-mode .text-gray-500 { color: #475569 !important; }
+.light-mode .text-gray-600 { color: #334155 !important; }
+
 
